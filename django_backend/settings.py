@@ -29,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,7 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     
-    
+    'channels',
 
     # My apps
     'users'
@@ -131,7 +133,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'django_backend.wsgi.application'
-
+ASGI_APPLICATION = 'django_backend.routing.application'
 
 
 # Database
@@ -213,4 +215,17 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v2.12',
     }
+}
+
+
+
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [REDIS_URL],
+        },
+    },
 }
