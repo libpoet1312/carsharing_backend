@@ -1,8 +1,8 @@
 from django.db.models.signals import m2m_changed
-# from notifications.signals import notify
-# from .models import Ride
-#
-#
+from notifications.signals import notify
+from .models import Ride
+
+
 # def join_request_handler(sender, instance, created, **kwargs):
 #     notify.send(instance, verb='Join Request Added')
 #

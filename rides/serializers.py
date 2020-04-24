@@ -1,14 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import StringRelatedField, RelatedField
 from .models import Ride
-from django.contrib.auth.models import User
-from notifications.models import Notification
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('pk', 'username',)
+from users.serializers import UserSerializer
 
 
 class TestRideSerializer(serializers.ModelSerializer):
@@ -26,7 +19,7 @@ class TestRideSerializer(serializers.ModelSerializer):
 
 
 class RideListSerializer(serializers.ModelSerializer):
-    uploader = UserSerializer()
+    uploader = UserSerializer(read_only=True)
 
     class Meta:
         model = Ride
@@ -45,13 +38,4 @@ class JoinRequestsSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class NotificationsSerializer(serializers.ModelSerializer):
-    actor = UserSerializer
-    recipient = UserSerializer
-    unread = serializers.BooleanField(read_only=True)
-    target = RideListSerializer
 
-    class Meta:
-        model = Notification
-        fields = ('actor', 'recipient', 'verb', 'target', 'unread')
-        depth = 0

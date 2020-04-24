@@ -55,10 +55,12 @@ INSTALLED_APPS = [
     
     'channels',
     'notifications',
+    'avatar',
 
     # My apps
     'users',
     'rides',
+    'notifier',
 ]
 
 JWT_AUTH = {
@@ -82,6 +84,7 @@ REST_FRAMEWORK = {
 REST_USE_JWT = True
 REST_SESSION_LOGIN = False
 
+SOCIALACCOUNT_AVATAR_SUPPORT = True
 
 # django - all auth
 
@@ -114,9 +117,9 @@ MIDDLEWARE = [
 
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8081',
+    'http://localhost:3000',
 )
 
 ROOT_URLCONF = 'django_backend.urls'
@@ -194,13 +197,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = 'media/'
 
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
         'METHOD': 'js_sdk',
         'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
-        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'SCOPE': ['email', 'public_profile', 'picture', 'id'],
         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
         'INIT_PARAMS': {'cookie': True},
         'FIELDS': [

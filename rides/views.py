@@ -10,6 +10,7 @@ from .permissions import IsOwnerOrReadOnly
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import *
 from notifications.signals import notify
+from django.contrib.auth.models import User
 
 
 class RideListView(ListAPIView):
@@ -62,11 +63,17 @@ class joinRequest(APIView):
     def get(self, request, pk):
         ride = Ride.objects.all().get(pk=pk)
 
+
+        # USER FHOTO URL!!!! HEHAHHAH
+        print(request.user.socialaccount_set.all()[0].get_avatar_url())
+
         if ride.joinRequests.filter(pk=request.user.pk).exists() | ride.passengers.filter(pk=request.user.pk).exists():
             return JsonResponse('Already requested to join! Please wait for confirmation!', safe=False)
 
         ride.joinRequests.add(request.user)
         ride.save()
+
+
 
         notify.send(request.user, actor=request.user, recipient=ride.uploader, verb='Requested to Join', target=ride)
 
@@ -165,14 +172,9 @@ class acceptJoin(APIView):
         ride.vacant_seats -= 1  # decrement vacant seats
         ride.save()
 
-        notify.send(request.user, recipient=acceptedUser, target=ride, verb='Request to join' + str(ride) + 'Accepted')
+        notify.send(request.user, recipient=acceptedUser, target=ride, verb='Request to join ' + str(ride) + ' Accepted')
 
         return JsonResponse('Accepted Join', safe=False)
 
 
-class NotificationsViewSet(ListAPIView):
-    serializer_class = NotificationsSerializer
 
-    def list(self, request, **kwargs):
-        queryset = request.user.notifications.all()
-        return response(NotificationsSerializer(queryset).data)

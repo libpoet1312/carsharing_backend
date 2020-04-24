@@ -17,5 +17,4 @@ urlpatterns = [
 
     path('<int:pk>/unjoin/', unJoin.as_view(), name='unjoin_ride'),  # from user scope
     path('<int:pk>/kick/<int:userid>/', kick.as_view(), name='kick'),  # from driver scope
-
 ]
