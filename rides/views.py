@@ -47,17 +47,37 @@ class RideEditView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
-class getRequests(RetrieveAPIView):
+class getAllRequests(ListAPIView):
+    queryset = Request.objects.all()
+    serializer_class = CostumRequestsSerializer
+    #authentication_classes = JSONWebTokenAuthentication
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    pagination_class = None
 
+    def get_queryset(self):
+        rides = Ride.objects.all().filter(uploader=self.request.user)
+        print(rides)
+        qs = []
+        for ride in rides:
+            qs += ride.request.all()
+        return qs
+
+
+class getRequestsforRide(ListAPIView):
+    queryset = Request.objects.all()
     serializer_class = RequestsSerializer
     authentication_classes = [JSONWebTokenAuthentication]
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    pagination_class = None
 
     def get_queryset(self):
         pk = self.kwargs.get('pk', None)
         print(pk)
         ride = Ride.objects.get(pk=pk)
+        self.check_object_permissions(self.request, ride)
+        print(ride)
         qs = ride.request.all()
+        print(qs)
         return qs
 
 
@@ -67,7 +87,7 @@ class joinRequest(APIView):
 
     def post(self, request, pk):
         ride = Ride.objects.all().get(pk=pk)
-        if ride.request.filter(pk=request.user.pk).exists() | Request.objects.all().filter(fromuser=request.user, ride=ride).exists():
+        if Request.objects.all().filter(fromuser=request.user, ride=ride).exists():
             return JsonResponse('Already requested to join! Please wait for confirmation!', safe=False)
 
         print(request.data)
@@ -110,16 +130,15 @@ class declineJoin(APIView):
     authentication_classes = [JSONWebTokenAuthentication]
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
-    def get(self, request, pk, userid):
+    def get(self, request, pk, userid):  # pk = ride pk, userid = user pk
         ride = get_object_or_404(Ride, pk=pk)
         self.check_object_permissions(request, ride)
-
-        if not ride.request.filter(pk=userid).exists():
-            return JsonResponse('doesnt exist!', safe=False)
-
+        print(ride.request.all())
         declinedUser = User.objects.get(pk=userid)
-
         req = Request.objects.all().get(fromuser=declinedUser, ride=ride)
+
+        if not req:
+            return JsonResponse('doesnt exist!', safe=False)
 
         req.delete()
 
@@ -144,7 +163,7 @@ class acceptJoin(APIView):
         req.accepted = True
         req.save()
 
-        ride.vacant_seats -= 1  # decrement vacant seats
+        ride.vacant_seats -= req.seats  # decrement vacant seats
         ride.save()
 
         notify.send(request.user, recipient=acceptedUser, target=ride,

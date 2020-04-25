@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework_jwt.views import refresh_jwt_token
-from .views import FacebookLogin, UserViewSet
+from .views import *
 
 urlpatterns = [
     path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
@@ -10,7 +10,10 @@ urlpatterns = [
 
     path('refresh-token/', refresh_jwt_token),
 
-    path('users/', UserViewSet.as_view(), name='all_users')
+    path('users/', UserViewSet.as_view(), name='all_users'),
+
+    #path('users/<int:pk>', UserUpdate.as_view(), name='update_user'),
+
 
     # path('accounts/', include('allauth.urls')),  # ?? ??
 ]

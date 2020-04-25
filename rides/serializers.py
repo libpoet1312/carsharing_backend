@@ -3,9 +3,9 @@ from rest_framework.serializers import StringRelatedField, RelatedField
 from .models import Ride, Request
 from users.serializers import UserSerializer, TestUserSerializer
 
-class RequestsSerializer0(serializers.ModelSerializer):
-    fromuser = TestUserSerializer()
 
+class RequestsSerializer(serializers.ModelSerializer):
+    fromuser = TestUserSerializer()
 
     class Meta:
         model = Request
@@ -14,36 +14,34 @@ class RequestsSerializer0(serializers.ModelSerializer):
 
 
 class TestRideSerializer(serializers.ModelSerializer):
-    uploader = TestUserSerializer()
-    request = RequestsSerializer0
+    uploader = TestUserSerializer(read_only=True)
+    request = RequestsSerializer(read_only=True, many=True)
 
     class Meta:
         model = Ride
         fields = ('pk', 'origin', 'destination', 'type',
                   'date', 'time', 'periodic', 'vacant_seats',
-                  'car', 'request', 'uploader')
+                  'car', 'uploader', 'request')
 
         depth = 2
 
 
 class RideListSerializer(serializers.ModelSerializer):
-    uploader = TestUserSerializer(read_only=True)
 
     class Meta:
         model = Ride
         fields = ('pk', 'origin', 'destination', 'type',
                   'date', 'time', 'periodic', 'vacant_seats',
-                  'uploader',)
+                  )
 
 
-class RequestsSerializer(serializers.ModelSerializer):
-    fromuser = UserSerializer
+class CostumRequestsSerializer(serializers.ModelSerializer):
+    fromuser = TestUserSerializer()
     ride = RideListSerializer()
 
     class Meta:
         model = Request
-        fields = ('fromuser', 'ride', 'seats', 'accepted',)
+        fields = ('fromuser', 'seats', 'accepted', 'ride')
         depth = 2
-
 
 

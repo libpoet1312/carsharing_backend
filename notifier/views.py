@@ -37,3 +37,17 @@ class NotificationSetRead(RetrieveUpdateDestroyAPIView):
 
         notification.mark_as_read()
         return JsonResponse('okey', safe=False)
+
+
+class AllNotificationSetRead(ListAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationsViewSet
+    authentication_classes = [JSONWebTokenAuthentication]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        qs = self.queryset
+        print(qs)
+        qs.mark_all_as_read(request.user)
+
+        return JsonResponse('okey', safe=False)
