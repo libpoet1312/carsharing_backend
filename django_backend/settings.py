@@ -28,11 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
-
-
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,19 +50,17 @@ INSTALLED_APPS = [
     
     'channels',
     'notifications',
-    'avatar',
+    'phonenumber_field',
+    'django_countries',
 
     # My apps
     'users',
     'rides',
+    'cars',
     'notifier',
 ]
 
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': timedelta(hours=1),
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_SECRET_KEY': SECRET_KEY,
-}
+SITE_ID = 1
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -80,19 +73,10 @@ REST_FRAMEWORK = {
     ),  #
 }
 
-# Enables django-rest-auth to use JWT tokens instead of regular tokens.
-REST_USE_JWT = True
-REST_SESSION_LOGIN = False
 
-SOCIALACCOUNT_AVATAR_SUPPORT = True
-
-# django - all auth
-
-
-
-
-SITE_ID = 1
+# Email backend is set to console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -119,7 +103,8 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
+    'https://localhost:3000',
+    'http://localhost:3000'
 )
 
 ROOT_URLCONF = 'django_backend.urls'
@@ -183,13 +168,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Europe/Athens'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -198,7 +179,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#
+# All-Auth USER Configuration
+#
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_UNIQUE_EMAIL = True
+# Main User Model
+AUTH_USER_MODEL = 'users.User'
+
+# Enables django-rest-auth to use JWT tokens instead of regular tokens.
+REST_USE_JWT = True
+REST_SESSION_LOGIN = False
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
@@ -227,6 +221,20 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': timedelta(hours=1),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_SECRET_KEY': SECRET_KEY,
+}
+
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.TestUserSerializer',
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
+}
 
 
 #REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')

@@ -1,25 +1,33 @@
 from rest_framework import serializers
 from rest_framework.serializers import StringRelatedField, RelatedField
-from .models import Ride
-from users.serializers import UserSerializer
+from .models import Ride, Request
+from users.serializers import UserSerializer, TestUserSerializer
+
+class RequestsSerializer0(serializers.ModelSerializer):
+    fromuser = TestUserSerializer()
+
+
+    class Meta:
+        model = Request
+        fields = ('fromuser', 'seats', 'accepted',)
+        depth = 2
 
 
 class TestRideSerializer(serializers.ModelSerializer):
-    joinRequests = UserSerializer(many=True)
-    uploader = UserSerializer()
-    passengers = UserSerializer(many=True)
+    uploader = TestUserSerializer()
+    request = RequestsSerializer0
 
     class Meta:
         model = Ride
         fields = ('pk', 'origin', 'destination', 'type',
                   'date', 'time', 'periodic', 'vacant_seats',
-                  'passengers', 'joinRequests', 'uploader')
+                  'car', 'request', 'uploader')
 
-        depth = 1
+        depth = 2
 
 
 class RideListSerializer(serializers.ModelSerializer):
-    uploader = UserSerializer(read_only=True)
+    uploader = TestUserSerializer(read_only=True)
 
     class Meta:
         model = Ride
@@ -28,14 +36,14 @@ class RideListSerializer(serializers.ModelSerializer):
                   'uploader',)
 
 
-class JoinRequestsSerializer(serializers.ModelSerializer):
-    # joinRequests = StringRelatedField(read_only=True, many=True)
-    joinRequests = UserSerializer(many=True)
+class RequestsSerializer(serializers.ModelSerializer):
+    fromuser = UserSerializer
+    ride = RideListSerializer()
 
     class Meta:
-        model = Ride
-        fields = ('joinRequests',)
-        depth = 1
+        model = Request
+        fields = ('fromuser', 'ride', 'seats', 'accepted',)
+        depth = 2
 
 
 
