@@ -5,11 +5,12 @@ import notifications.urls
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from schema_graph.views import Schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Back-End Admin Page
     path('notifications/', login_required(include(notifications.urls, namespace='notifications'))),  #
-
+    path("schema/", Schema.as_view()),
 
     path('notifier/', include('notifier.urls')),
 

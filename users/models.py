@@ -13,13 +13,13 @@ class User(AbstractUser):
     )
 
     dob = models.DateField(max_length=8, default=datetime.date(1999, 12, 31))
-    phone_number = PhoneNumberField(blank=True, verbose_name='Τηλέφωνο', null=True)  # Τηλέφωνο
+    phone_number = PhoneNumberField(blank=True, null=True, verbose_name='Τηλέφωνο')  # Τηλέφωνο
     avatar = models.ImageField(upload_to='avatar/', default='avatar/default-avatar.jpg', blank=True)
-    gender = models.CharField(blank=True, max_length=1, default=GENDER.O, choices=GENDER, verbose_name='Φύλο')
+    gender = models.CharField(blank=True, null=True, max_length=1, default=GENDER.O, choices=GENDER, verbose_name='Φύλο')
     country = models.CharField(max_length=3, blank=True, verbose_name='Χώρα', null=True)
 
-    has_whatsup = models.BooleanField(default=False, verbose_name='Whats up messenger platform')
-    has_viber = models.BooleanField(default=False, verbose_name='Viber messenger platform')
+    has_whatsup = models.BooleanField(blank=True, null=True, verbose_name='Whats up messenger platform')
+    has_viber = models.BooleanField(blank=True, null=True, verbose_name='Viber messenger platform')
 
     is_confirmed = models.BooleanField(default=True, verbose_name='Επιβεβαιωμένος χρήστης')
     # for future confirmation by admins of user ID or PASSPORT

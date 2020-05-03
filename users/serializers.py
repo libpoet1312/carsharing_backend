@@ -27,8 +27,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     country = serializers.CharField(required=False)
     has_whatsup = serializers.BooleanField(required=False, default=False)
     has_viber = serializers.BooleanField(required=False, default=False)
-    is_confirmed = serializers.BooleanField(default=True, required=False)
-
+    is_confirmed = serializers.BooleanField(default=True, required=False, read_only=True)
 
 
     class Meta:
@@ -49,7 +48,6 @@ class CustomRegisterSerializer(RegisterSerializer):
             'country': self.validated_data.get('country', ''),
             'has_whatsup': self.validated_data.get('has_whatsup', ''),
             'has_viber': self.validated_data.get('has_viber', ''),
-            'is_confirmed': self.validated_data.get('is_confirmed', ''),
         }
 
     def save(self, request):
@@ -63,7 +61,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.country = self.cleaned_data.get('country')
         user.has_whatsup = self.cleaned_data.get('has_whatsup')
         user.has_viber = self.cleaned_data.get('has_viber')
-        user.is_confirmed = self.cleaned_data.get('is_confirmed')
 
         print('username', self.cleaned_data.get('username'))
         print('password1',self.cleaned_data.get('password1'))
@@ -75,8 +72,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         print(self.cleaned_data.get('country'))
         print(self.cleaned_data.get('has_whatsup'))
         print(self.cleaned_data.get('has_viber'))
-        print(self.cleaned_data.get('is_confirmed'))
-
 
         user.save()
         adapter.save_user(request, user, self)

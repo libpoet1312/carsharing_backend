@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'django_countries',
 
+    'schema_graph',
+
     # My apps
     'users',
     'rides',
