@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
-            'fields': ('email', 'username', 'password1', 'password2')
+            'fields': ('email', 'username', 'password', 'avatar')
         }),
         ('Permissions', {
             'fields': ('is_superuser', 'is_staff')
@@ -16,7 +16,7 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('email', 'username', 'password1', 'password2')
+            'fields': ('email', 'username', 'password', 'avatar', 'country', 'phone_number', 'dob', 'gender')
         }),
         ('Permissions', {
             'fields': ('is_superuser', 'is_staff')

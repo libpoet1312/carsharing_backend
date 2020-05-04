@@ -15,6 +15,7 @@ urlpatterns = [
     path('notifier/', include('notifier.urls')),
 
     path('api/', include('rides.urls')),  # the real api endpoint
+    path('cars/', include('cars.urls')),
 
     path('', include('users.urls')),
     path('', Home.as_view(), name='home'),  # test template home view

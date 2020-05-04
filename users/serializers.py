@@ -10,8 +10,8 @@ class TestUserSerializer(serializers.ModelSerializer):
         model = User
         # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                   'has_whatsup', 'has_viber', )
-        depth = 2
+                   'has_whatsup', 'has_viber', 'car')
+        depth = 1
 
 
 class UserSerializer(serializers.ModelSerializer):

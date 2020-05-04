@@ -4,7 +4,7 @@ from .models import Car
 
 
 class CarSerializer(serializers.ModelSerializer):
-    owner = UserSerializer
+    owner = UserSerializer(read_only=True)
 
     class Meta:
         model = Car
