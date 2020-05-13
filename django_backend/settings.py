@@ -106,7 +106,9 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'https://localhost:3000',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://192.168.1.45:3000',
+    'http://192.168.1.45:3000'
 )
 
 ROOT_URLCONF = 'django_backend.urls'
@@ -224,9 +226,10 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': timedelta(hours=1),
+    'JWT_EXPIRATION_DELTA': timedelta(hours=100),
     'JWT_ALLOW_REFRESH': True,
     'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_AUTH_COOKIE': 'JWT',
 }
 
 
@@ -239,13 +242,13 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 }
 
 
-#REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
 
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [REDIS_URL],
-#         },
-#     },
-# }
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [REDIS_URL],
+        },
+    },
+}

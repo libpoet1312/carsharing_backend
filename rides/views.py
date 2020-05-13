@@ -18,6 +18,29 @@ class RideListView(ListAPIView):
     serializer_class = TestRideSerializer
     permission_classes = [AllowAny, ]
 
+    def get_queryset(self):
+        queryset = Ride.objects.all()
+        origin = self.request.query_params.get('origin', None)
+        #print(origin)
+        if origin is not None:
+            queryset = queryset.filter(origin__contains=origin)
+
+        destination = self.request.query_params.get('destination', None)
+        if destination is not None:
+            queryset = queryset.filter(destination__contains=destination)
+
+        date = self.request.query_params.get('date', None)
+        if date is not None:
+            print(date)
+            queryset = queryset.filter(date=date)
+
+        vacant_seats = self.request.query_params.get('passengers', None)
+        if vacant_seats is not None:
+            print(vacant_seats)
+            queryset = queryset.filter(vacant_seats__gte=vacant_seats)
+
+        return queryset
+
 
 class RideCreateView(CreateAPIView):
     queryset = Ride.objects.all()

@@ -4,6 +4,7 @@ from allauth.account.signals import user_signed_up
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
+from allauth.socialaccount.signals import social_account_added
 from rest_auth.registration.views import SocialLoginView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .permissions import IsUserOrReadOnly
@@ -54,7 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return super(self.__class__, self).get_permissions()
 
 
-@receiver(user_signed_up)
+@receiver(social_account_added)
 def populate_profile(sociallogin, user, **kwargs):
     if sociallogin.account.provider == 'facebook':
         user_data = user.socialaccount_set.filter(provider='facebook')[0].extra_data

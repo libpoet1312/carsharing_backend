@@ -6,11 +6,12 @@ from phonenumber_field.serializerfields import PhoneNumberField
 
 
 class TestUserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                   'has_whatsup', 'has_viber', 'car')
+                   'has_whatsup', 'has_viber', 'car',)
         depth = 1
 
 
@@ -21,14 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CustomRegisterSerializer(RegisterSerializer):
-    phone_number = PhoneNumberField(required=False)
-    avatar = serializers.ImageField(required=False)
-    gender = serializers.ChoiceField(choices=User.GENDER)
+
     country = serializers.CharField(required=False)
     has_whatsup = serializers.BooleanField(required=False, default=False)
     has_viber = serializers.BooleanField(required=False, default=False)
     is_confirmed = serializers.BooleanField(default=True, required=False, read_only=True)
-
 
     class Meta:
         model = User

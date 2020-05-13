@@ -31,7 +31,3 @@ class CarViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsCarOwnerOrReadOnly,]
 
         return super(self.__class__, self).get_permissions()
-
-
-
-

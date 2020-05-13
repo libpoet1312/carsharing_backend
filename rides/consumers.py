@@ -1,32 +1,54 @@
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from django.contrib.auth import get_user_model
+from asgiref.sync import async_to_sync
+from django.shortcuts import get_object_or_404
+
+User = get_user_model()
+
+@database_sync_to_async
+def get_user():
+    user = get_object_or_404(User, pk=1)
+    print(user)
+    return user
+
+
 
 
 class RideConsumer(AsyncJsonWebsocketConsumer):
-
     async def connect(self):
-        await self.channel_layer.group_add(
-            group='test',
-            channel=self.channel_name
-        )
+        # ridePK = self.scope['url_route']['kwargs']['pk']
+        user = self.scope['user']
+
+        if not user.is_authenticated:
+            # await self.close()
+            user = get_user()
+        print(user)
+
         await self.accept()
 
     async def receive_json(self, content, **kwargs):
-        message_type = content.get('type')
-        if message_type == 'echo.message':
+        action_type = content.get('type')
+
+        if action_type == 'echo.message':
             await self.send_json({
-                'type': message_type,
+                'type': action_type,
                 'data': content.get('data'),
             })
+        elif action_type == 'join':
+            data = content.get('ride')
 
-    async def echo_message(self, message):  # new
-        await self.send_json({
-            'type': message.get('type'),
-            'data': message.get('data'),
-        })
+
+
+        else:
+            print('skata')
+
+
+
 
     async def disconnect(self, code):
-        await self.channel_layer.group_discard(
-            group='test',
-            channel=self.channel_name
-        )
         await super().disconnect(code)
+
+
+
+
