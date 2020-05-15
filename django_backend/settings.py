@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'rides',
     'cars',
     'notifier',
+    'rideRequests',
 ]
 
 SITE_ID = 1
@@ -71,7 +72,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        #'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),  #
 }
 
@@ -229,16 +230,11 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(hours=100),
     'JWT_ALLOW_REFRESH': True,
     'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_AUTH_COOKIE': 'JWT',
-    'JWT_AUTH_COOKIE_DOMAIN': None,
-    'JWT_AUTH_COOKIE_PATH': '/',
-    'JWT_AUTH_COOKIE_SECURE': True,
-    'JWT_AUTH_COOKIE_SAMESITE': 'Lax',
 }
 
 
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'users.serializers.TestUserSerializer',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.MyUserSerializer',
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {

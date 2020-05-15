@@ -40,21 +40,48 @@ from django.contrib.auth.models import AnonymousUser
 #         request.user = SimpleLazyObject(lambda: get_user_jwt(request))
 #         print('FROM MIDDLEWARE=', request.user)
 
+# class AuthenticationMiddlewareJWT(object):
+#     def __init__(self, get_response):
+#         self.get_response = get_response
+#
+#     def __call__(self, request):
+#         # print(request.user)
+#         request.user = SimpleLazyObject(lambda: self.__class__.get_jwt_user(request))
+#         #request.user = self.__class__.get_jwt_user(request)
+#         # print(request.user)
+#         return self.get_response(request)
+#
+#     @staticmethod
+#     def get_jwt_user(request):
+#
+#         user = get_user(request)
+#         #print('FROM MIDDLEWARE=', user)
+#
+#
+#         user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
+#         if user_jwt is not None:
+#             print(user_jwt[0])
+#             return user_jwt[0]
+#         else:
+#
+#             if user.is_authenticated:
+#                 print('Authenticated')
+#                 return user
+#
+#             return AnonymousUser
+
 class AuthenticationMiddlewareJWT(object):
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-
         request.user = SimpleLazyObject(lambda: self.__class__.get_jwt_user(request))
-        #print(request.user)
         return self.get_response(request)
 
     @staticmethod
     def get_jwt_user(request):
 
         user = get_user(request)
-        #print('FROM MIDDLEWARE=', user)
         if user.is_authenticated:
             return user
         try:
@@ -64,3 +91,4 @@ class AuthenticationMiddlewareJWT(object):
         except:
             pass
         return user # AnonymousUser
+

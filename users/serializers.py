@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+
 from .models import User
 from allauth.account.adapter import get_adapter
 from rest_auth.registration.serializers import RegisterSerializer
@@ -6,19 +8,30 @@ from phonenumber_field.serializerfields import PhoneNumberField
 
 
 class TestUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields = '__all__'
+        fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
+                   'has_whatsup', 'has_viber', 'car', 'request',)
+        depth = 1
+
+
+class MyUserSerializer(serializers.ModelSerializer):
+    #request = UserRequestsSerializer()
 
     class Meta:
         model = User
         # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                   'has_whatsup', 'has_viber', 'car',)
-        depth = 1
+                   'has_whatsup', 'has_viber', 'car', 'request',)
+        depth = 3
 
 
-class UserSerializer(serializers.ModelSerializer):
+
+class SimpleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('pk', 'username',)
+        fields = ('pk', 'username', 'avatar')
 
 
 class CustomRegisterSerializer(RegisterSerializer):

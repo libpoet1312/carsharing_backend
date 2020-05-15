@@ -2,7 +2,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
-from rides.models import Request, Ride
+from rides.models import  Ride
 from django_redux import action, AsyncReduxConsumer
 import json
 User = get_user_model()
@@ -18,30 +18,27 @@ User = get_user_model()
 class MyConsumer(AsyncReduxConsumer):
 
     async def connect(self):
-        await super().connect()
+        user = self.scope['user']
         print(self.scope['user'])
-        # if self.user is not None and self.user.is_authenticated:
-        #     await self.send_json({
-        #         'type': 'SET_USER',
-        #         'user': {
-        #             'username': self.user.username,
-        #         }
-        #     })
-        # else:
-        # get all requests
-        # requests = await getRequests(self)
-        # print(requests)
-        # await self.send_json({
-        #     'type': 'SET_USER',
-        #     'user': {
-        #         'requests': json.dumps(requests),
-        #     }
-        # })
+        if user.is_anonymous or user is None:
+            await self.close()
+
+        await super().connect()
+
+        self.channel_layer.group_add(user, self.channel_name)
+
+        await self.send_json({
+            'type': 'SET_USER',
+            'user': {
+                'username': self.user.username,
+            }
+        })
 
     async def disconnect(self, code):
         await super().disconnect(code)
+        self.channel_layer.group_discard(self.scope['user'], self.channel_name)
         await self.close()
-        print('disconnect', code)
+        print('disconnect')
 
 
 

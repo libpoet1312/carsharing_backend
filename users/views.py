@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .permissions import IsUserOrReadOnly
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .models import User
-from .serializers import UserSerializer, TestUserSerializer, CustomRegisterSerializer
+from .serializers import SimpleUserSerializer, TestUserSerializer, CustomRegisterSerializer
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import viewsets
 

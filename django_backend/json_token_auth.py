@@ -17,10 +17,8 @@ import jwt
 def get_user(query_string):
     try:
         params = parse_qs(query_string.decode('utf8'))
-
         token = params['token'][0]
 
-        print(token)
         if token:
             try:
                 payload = jwt_decode_handler(token)
@@ -49,7 +47,7 @@ def get_user(query_string):
                 msg = 'User account is disabled.'
                 raise exceptions.AuthenticationFailed(msg)
 
-            print(user)
+            # print(user)
             return user
 
     except query_string is None:
@@ -81,7 +79,7 @@ class TokenAuthMiddlewareInstance:
 
     async def __call__(self, receive, send):
         query_string = self.scope['query_string']
-        print(query_string)
+        # print(query_string)
 
         if b'token' in self.scope['query_string']:
             self.scope['user'] = await get_user(query_string)

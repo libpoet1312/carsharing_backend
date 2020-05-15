@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from users.serializers import UserSerializer
+from users.serializers import SimpleUserSerializer
 from rides.serializers import RideListSerializer
 from notifications.models import Notification
 
 
 class NotificationsSerializer(serializers.ModelSerializer):
-    actor = UserSerializer()
-    recipient = UserSerializer()
+    actor = SimpleUserSerializer()
+    recipient = SimpleUserSerializer()
     unread = serializers.BooleanField(read_only=True)
     target = RideListSerializer()
 
@@ -17,8 +17,8 @@ class NotificationsSerializer(serializers.ModelSerializer):
 
 
 class NotificationsEditSerializer(serializers.ModelSerializer):
-    actor = UserSerializer(read_only=True)
-    recipient = UserSerializer(read_only=True)
+    actor = SimpleUserSerializer(read_only=True)
+    recipient = SimpleUserSerializer(read_only=True)
     unread = serializers.BooleanField(read_only=True)
     target = RideListSerializer(read_only=True)
 

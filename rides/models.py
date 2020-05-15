@@ -33,14 +33,3 @@ class Ride(models.Model):
 
     def __str__(self):
         return self.origin + ' to ' + self.destination
-
-
-class Request(models.Model):
-    fromuser = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='request')
-    ride = models.ForeignKey(Ride, related_name='request', on_delete=models.CASCADE)
-    seats = models.IntegerField(default=1)
-
-    accepted = models.BooleanField(default=False)
-
-    def __str__(self):
-        return '%d seat from %s for %s' % (self.seats, self.fromuser, self.ride)
