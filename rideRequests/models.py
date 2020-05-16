@@ -20,17 +20,4 @@ class Request(models.Model):
         return '%d seat from %s for %s' % (self.seats, self.fromuser, self.ride)
 
 
-@receiver(post_save, sender=Request)
-def post_save_handler(sender, instance, created, **kwargs):
-    print(instance)
-    issuer = instance.fromuser
-    channel_layer = get_channel_layer()
-    print(issuer)
 
-    async_to_sync(channel_layer.group_send)(
-        issuer.username,
-        {
-            "type": "book.gossip",
-            "message": instance
-        }
-    )

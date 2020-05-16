@@ -29,7 +29,7 @@ def get_user(query_string):
                 msg = 'Error decoding token.'
                 raise exceptions.AuthenticationFailed(msg)
 
-            print(payload)
+            #print(payload)
 
             username = jwt_get_username_from_payload_handler(payload)
             if not username:

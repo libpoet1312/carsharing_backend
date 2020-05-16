@@ -7,7 +7,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerOrReadOnly
 # from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import *
+from .serializers import RideListSerializer, TestRideSerializer, OwnerSingleRideSerializer, \
+    AuthenticatedSingleRideSerializer, AnonymousSingleRideSerializer
 from notifications.signals import notify
 from users.models import User
 from .models import Ride
@@ -64,14 +65,14 @@ class RideDetailView(RetrieveAPIView):
     authentication_classes = [JSONWebTokenAuthentication]
 
     def get_serializer_class(self):
-        print(self.request.user)
+        #print(self.request.user)
         if self.request.user.is_authenticated:
             if self.get_object().uploader == self.request.user:
                 serializer_class = OwnerSingleRideSerializer
             else:
                 serializer_class = AuthenticatedSingleRideSerializer
         else:
-            print('edw')
+            #print('edw')
             serializer_class = AnonymousSingleRideSerializer
         return serializer_class
 

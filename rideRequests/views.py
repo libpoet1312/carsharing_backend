@@ -1,3 +1,7 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.db.models.signals import post_save, post_delete, pre_delete
+from django.dispatch import receiver
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -16,16 +20,30 @@ from rest_framework.generics import ListAPIView
 User = get_user_model()
 
 
+class getMyRequests(ListAPIView):
+    queryset = Request.objects.all()
+    serializer_class = UserRequestsSerializer
+    authentication_classes = [JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    pagination_class = None
+
+    def get_queryset(self):
+        req = Request.objects.all().filter(fromuser=self.request.user)
+        # print(req)
+
+        return req
+
+
 class getAllRequests(ListAPIView):
     queryset = Request.objects.all()
-    serializer_class = CostumRequestsSerializer
-    # authentication_classes = JSONWebTokenAuthentication
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    serializer_class = CustomRequestsSerializer
+    authentication_classes = [JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
     pagination_class = None
 
     def get_queryset(self):
         rides = Ride.objects.all().filter(uploader=self.request.user)
-        print(rides)
+        # print(rides)
         qs = []
         for ride in rides:
             qs += ride.request.all()
@@ -41,12 +59,12 @@ class getRequestsforRide(ListAPIView):
 
     def get_queryset(self):
         pk = self.kwargs.get('pk', None)
-        print(pk)
+        # print(pk)
         ride = Ride.objects.get(pk=pk)
         self.check_object_permissions(self.request, ride)
-        print(ride)
+        # print(ride)
         qs = ride.request.all()
-        print(qs)
+        # print(qs)
         return qs
 
 
@@ -81,9 +99,8 @@ class joinRequest(APIView):
             accepted=False
         )
 
-        response = RequestsSerializer(instance=req).data
-        print(response)
-
+        response = UserRequestsSerializer(instance=req).data
+        # print(response)
 
         notify.send(request.user, actor=request.user, recipient=ride.uploader, verb='Requested to Join', target=ride)
 
@@ -114,7 +131,7 @@ class declineJoin(APIView):
     def get(self, request, pk, userid):  # pk = ride pk, userid = user pk
         ride = get_object_or_404(Ride, pk=pk)
         self.check_object_permissions(request, ride)
-        print(ride.request.all())
+        # print(ride.request.all())
         declinedUser = User.objects.get(pk=userid)
         req = Request.objects.all().get(fromuser=declinedUser, ride=ride)
 
@@ -151,3 +168,82 @@ class acceptJoin(APIView):
                     verb='Request to join ' + str(ride) + ' Accepted')
 
         return JsonResponse('Accepted Join', safe=False)
+
+
+@receiver(post_save, sender=Request)
+def post_save_handler(sender, instance, created, **kwargs):
+
+    # print(instance)
+    print('ADD')
+    ride = instance.ride
+    channel_layer = get_channel_layer()
+    # print(ride.uploader.pk)
+
+    # send notification to uploader!
+    JSONinstance = CustomRequestsSerializer(instance=instance).data
+    if created:
+        async_to_sync(channel_layer.group_send)(
+            str(ride.uploader.pk),
+            {
+                "type": "addRequests",
+                "text": JSONinstance
+            }
+        )
+    else:
+        async_to_sync(channel_layer.group_send)(
+            str(instance.fromuser.pk),
+            {
+                "type": "updateRequests",
+                "text": JSONinstance
+            }
+        )
+
+
+
+# @receiver(pre_delete, sender=Request)
+# def pre_delete_handler(sender, instance, **kwargs):
+#     print('DELETE1')
+#     ride = instance.ride
+#     channel_layer = get_channel_layer()
+#     # print(ride.uploader.pk)
+#
+#     # send notification to uploader!
+#     JSONinstance = CustomRequestsSerializer(instance=instance).data
+#
+#     async_to_sync(channel_layer.group_send)(
+#         str(ride.uploader.pk),
+#         {
+#             "type": "removeRequests",
+#             "text": JSONinstance
+#         }
+#     )
+
+
+@receiver(post_delete, sender=Request)
+def pre_delete_handler(sender, instance, **kwargs):
+    print('DELETE2')
+    print(kwargs['signal'])
+    ride = instance.ride
+    channel_layer = get_channel_layer()
+    # print(ride.uploader.pk)
+
+    # send notification to uploader!
+    JSONinstance = CustomRequestsSerializer(instance=instance).data
+
+    async_to_sync(channel_layer.group_send)(
+        str(instance.fromuser.pk),
+        {
+            "type": "removeMYRequests",
+            "text": JSONinstance
+        }
+    )
+
+    JSONinstance = CustomRequestsSerializer(instance=instance).data
+
+    async_to_sync(channel_layer.group_send)(
+        str(ride.uploader.pk),
+        {
+            "type": "removeRequests",
+            "text": JSONinstance
+        }
+    )

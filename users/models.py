@@ -5,6 +5,7 @@ from model_utils import Choices
 import datetime
 
 
+
 class User(AbstractUser):
     GENDER = Choices(
         ('M', 'Male'),
@@ -34,5 +35,19 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return "user/%s" % self.username
 
+    def user_Rides(self):
+        from rides.models import Ride
+        return Ride.objects.all().filter(uploader=self.username)
 
+    def requestsOfMyRides(self):
+        from rides.models import Ride
+        from rideRequests.models import Request
+        from rideRequests.serializers import CustomRequestsSerializer
+        print(Request.objects.all().filter(ride__uploader=self))
+        json = CustomRequestsSerializer(Request.objects.all().filter(ride__uploader=self), many=True).data
+        print(json)
+        #print(Ride.objects.all().filter(uploader=self).values())
+
+
+        return json
 

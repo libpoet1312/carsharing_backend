@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-
+from rideRequests.serializers import UserRequestsSerializer
+from rides.models import Ride
 from .models import User
 from allauth.account.adapter import get_adapter
 from rest_auth.registration.serializers import RegisterSerializer
@@ -17,15 +18,19 @@ class TestUserSerializer(serializers.ModelSerializer):
 
 
 class MyUserSerializer(serializers.ModelSerializer):
-    #request = UserRequestsSerializer()
+    request = UserRequestsSerializer(many=True)
+    requestsOfMyRides = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                   'has_whatsup', 'has_viber', 'car', 'request',)
-        depth = 3
+                   'has_whatsup', 'has_viber', 'car', 'request', 'requestsOfMyRides')
+        depth = 2
 
+    def requestsOfMyRides(self):
+        from rideRequests.serializers import RequestsSerializer
+        return RequestsSerializer().data
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
