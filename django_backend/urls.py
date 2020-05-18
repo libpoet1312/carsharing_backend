@@ -12,7 +12,7 @@ urlpatterns = [
     path('notifications/', login_required(include(notifications.urls, namespace='notifications'))),  #
     path("schema/", Schema.as_view()),
 
-    # path('notifier/', include('notifier.urls')),
+    path('notifier/', include('notifier.urls')),
 
     path('api/', include('rides.urls')),  # the real api endpoint
     path('cars/', include('cars.urls')),

@@ -1,3 +1,5 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -12,6 +14,8 @@ from rides.permissions import IsOwnerOrReadOnly
 # GET ALL NOTIFICATIONSs
 class NotificationsViewSet(ListAPIView):
     serializer_class = NotificationsSerializer
+    authentication_classes = [JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
     pagination_class = None
 
     def get_queryset(self):
@@ -51,3 +55,9 @@ class AllNotificationSetRead(ListAPIView):
         qs.mark_all_as_read(request.user)
 
         return JsonResponse('okey', safe=False)
+
+
+@receiver(post_save, sender=Notification)
+def post_save_handler(sender, instance, created, **kwargs):
+    if created:
+        print(instance)

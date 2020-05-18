@@ -172,7 +172,6 @@ class acceptJoin(APIView):
 
 @receiver(post_save, sender=Request)
 def post_save_handler(sender, instance, created, **kwargs):
-
     # print(instance)
     print('ADD')
     ride = instance.ride
@@ -197,7 +196,6 @@ def post_save_handler(sender, instance, created, **kwargs):
                 "text": JSONinstance
             }
         )
-
 
 
 # @receiver(pre_delete, sender=Request)
