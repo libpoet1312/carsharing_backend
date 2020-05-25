@@ -21,6 +21,7 @@ class TestRideSerializer(serializers.ModelSerializer):
 
 class RideListSerializer(serializers.ModelSerializer):
     uploader = SimpleUserSerializer(read_only=True)
+    time = serializers.TimeField(required=False, format=None, input_formats=None)
 
     class Meta:
         model = Ride
