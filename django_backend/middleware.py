@@ -75,20 +75,22 @@ class AuthenticationMiddlewareJWT(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        request.user = SimpleLazyObject(lambda: self.__class__.get_jwt_user(request))
+        request.user = self.__class__.get_jwt_user(request)
+        #print(request.user)
         return self.get_response(request)
 
     @staticmethod
     def get_jwt_user(request):
 
         user = get_user(request)
+
         if user.is_authenticated:
             return user
         try:
             user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
+            #print(user_jwt[0])
             if user_jwt is not None:
                 return user_jwt[0]
         except:
             pass
-        return user # AnonymousUser
-
+        return user  # AnonymousUser

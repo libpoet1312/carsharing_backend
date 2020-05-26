@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import Request
+
 User = get_user_model()
+
 
 class UserRequestsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,6 +29,7 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 class CustomRequestsSerializer(serializers.ModelSerializer):
     fromuser = SimpleUserSerializer()
+
     # ride = RideListSerializer()
 
     class Meta:

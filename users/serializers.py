@@ -1,9 +1,8 @@
 from rest_framework import serializers
+from allauth.account.adapter import get_adapter
 
 from rideRequests.serializers import UserRequestsSerializer
-from rides.models import Ride
 from .models import User
-from allauth.account.adapter import get_adapter
 from rest_auth.registration.serializers import RegisterSerializer
 from phonenumber_field.serializerfields import PhoneNumberField
 
@@ -13,24 +12,37 @@ class TestUserSerializer(serializers.ModelSerializer):
         model = User
         # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                   'has_whatsup', 'has_viber', 'car', 'request',)
+                  'has_whatsup', 'has_viber',)
         depth = 1
 
 
 class MyUserSerializer(serializers.ModelSerializer):
     request = UserRequestsSerializer(many=True)
+    notifications = serializers.SerializerMethodField()
     requestsOfMyRides = serializers.SerializerMethodField()
+    car = serializers.SerializerMethodField(method_name="get_car")
 
     class Meta:
         model = User
-        # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                   'has_whatsup', 'has_viber', 'car', 'request', 'requestsOfMyRides')
+                  'has_whatsup', 'has_viber', 'car', 'request', 'requestsOfMyRides', 'notifications',)
         depth = 2
 
     def requestsOfMyRides(self):
         from rideRequests.serializers import RequestsSerializer
-        return RequestsSerializer().data
+        print('requestsOfMyRides')
+        return RequestsSerializer(many=True).data
+
+    def get_notifications(self, obj):
+        print('edw')
+        from notifier.serializers import NotificationsSerializer
+        print(obj)
+        return NotificationsSerializer(obj.notifications.all(), many=True).data
+
+    def get_car(self, obj):
+        print("car")
+        from cars.serializers import CarSerializer
+        return CarSerializer(obj.car.all(), many=True).data
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
@@ -40,7 +52,6 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 
 class CustomRegisterSerializer(RegisterSerializer):
-
     country = serializers.CharField(required=False)
     has_whatsup = serializers.BooleanField(required=False, default=False)
     has_viber = serializers.BooleanField(required=False, default=False)
@@ -79,11 +90,11 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.has_viber = self.cleaned_data.get('has_viber')
 
         print('username', self.cleaned_data.get('username'))
-        print('password1',self.cleaned_data.get('password1'))
-        print('password2',self.cleaned_data.get('password2'))
-        print('email',self.cleaned_data.get('email'))
-        print('phone_number',self.cleaned_data.get('phone_number'))
-        print('avatar',self.cleaned_data.get('avatar'))
+        print('password1', self.cleaned_data.get('password1'))
+        print('password2', self.cleaned_data.get('password2'))
+        print('email', self.cleaned_data.get('email'))
+        print('phone_number', self.cleaned_data.get('phone_number'))
+        print('avatar', self.cleaned_data.get('avatar'))
         print(self.cleaned_data.get('gender'))
         print(self.cleaned_data.get('country'))
         print(self.cleaned_data.get('has_whatsup'))

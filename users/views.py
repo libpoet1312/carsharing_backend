@@ -65,9 +65,6 @@ def populate_profile(sociallogin, user, **kwargs):
         ph = urlopen(picture_url)
         print(ph)
 
-
         user.avatar.save((user.username + " social") + '.jpg',
-                                   ContentFile(ph.read()))
+                         ContentFile(ph.read()))
         user.save()
-
-

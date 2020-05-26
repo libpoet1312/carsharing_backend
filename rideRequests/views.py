@@ -59,12 +59,11 @@ class getRequestsforRide(ListAPIView):
 
     def get_queryset(self):
         pk = self.kwargs.get('pk', None)
-        # print(pk)
         ride = Ride.objects.get(pk=pk)
         self.check_object_permissions(self.request, ride)
-        # print(ride)
+
         qs = ride.request.all()
-        # print(qs)
+
         return qs
 
 
@@ -100,7 +99,6 @@ class joinRequest(APIView):
         )
 
         response = UserRequestsSerializer(instance=req).data
-        # print(response)
 
         notify.send(request.user, actor=request.user, recipient=ride.uploader, verb='Requested to Join', target=ride)
 
@@ -131,7 +129,7 @@ class declineJoin(APIView):
     def get(self, request, pk, userid):  # pk = ride pk, userid = user pk
         ride = get_object_or_404(Ride, pk=pk)
         self.check_object_permissions(request, ride)
-        # print(ride.request.all())
+
         declinedUser = User.objects.get(pk=userid)
         req = Request.objects.all().get(fromuser=declinedUser, ride=ride)
 

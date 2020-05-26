@@ -12,8 +12,8 @@ class NotificationsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ('id', 'actor', 'recipient', 'verb', 'target', 'unread')
-        depth = 0
+        fields = ('id', 'actor', 'recipient', 'verb', 'target', 'unread', 'timestamp')
+        depth = 1
 
 
 class NotificationsEditSerializer(serializers.ModelSerializer):
