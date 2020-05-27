@@ -1,16 +1,11 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerOrReadOnly
-# from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import RideListSerializer, TestRideSerializer, OwnerSingleRideSerializer, \
     AuthenticatedSingleRideSerializer, AnonymousSingleRideSerializer
-from notifications.signals import notify
-from users.models import User
 from .models import Ride
 
 

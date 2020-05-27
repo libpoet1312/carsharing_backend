@@ -51,3 +51,6 @@ class MyConsumer(WebsocketConsumer):
     def updateRequests(self, event):
         # print(event)
         self.send(text_data=json.dumps(event))
+
+    def sendNotification(self, event):
+        self.send(text_data=json.dumps(event))

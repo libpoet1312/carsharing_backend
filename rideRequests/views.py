@@ -100,7 +100,7 @@ class joinRequest(APIView):
 
         response = UserRequestsSerializer(instance=req).data
 
-        notify.send(request.user, actor=request.user, recipient=ride.uploader, verb='Requested to Join', target=ride)
+        notify.send(request.user, actor=request.user, recipient=ride.uploader, verb='request', target=ride)
 
         return JsonResponse(response, safe=False)
 
@@ -117,7 +117,7 @@ class unJoin(APIView):
 
         req.delete()
 
-        # notify.send(request.user, recipient=ride.uploader, verb='Cancel request to Join', target=ride)
+        notify.send(request.user, recipient=ride.uploader, verb='cancelRequest', target=ride)
 
         return JsonResponse('Canceled Request to Join', safe=False)
 
@@ -137,6 +137,8 @@ class declineJoin(APIView):
             return JsonResponse('doesnt exist!', safe=False)
 
         req.delete()
+
+        notify.send(request.user, recipient=declinedUser, verb='declineRequest', target=ride)
 
         return JsonResponse('Declined Join', safe=False)
 
@@ -163,7 +165,7 @@ class acceptJoin(APIView):
         ride.save()
 
         notify.send(request.user, recipient=acceptedUser, target=ride,
-                    verb='Request to join ' + str(ride) + ' Accepted')
+                    verb='accepted')
 
         return JsonResponse('Accepted Join', safe=False)
 
