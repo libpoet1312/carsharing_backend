@@ -1,5 +1,4 @@
 from channels.routing import ProtocolTypeRouter, URLRouter  # changed
-from channels.auth import AuthMiddlewareStack
 import rides.routing
 from django_backend.json_token_auth import TokenAuthMiddlewareStack
 

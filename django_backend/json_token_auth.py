@@ -1,14 +1,14 @@
 from channels.auth import AuthMiddlewareStack
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-from rest_framework_jwt import authentication
-from urllib.parse import urlparse
+
 from urllib.parse import parse_qs
 from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
-from rest_framework_jwt.utils import jwt_decode_handler, jwt_get_username_from_payload_handler
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+import rest_framework_jwt.utils
 from rest_framework_jwt.settings import api_settings
+jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+
 from rest_framework import exceptions
 import jwt
 
@@ -31,7 +31,7 @@ def get_user(query_string):
 
             #print(payload)
 
-            username = jwt_get_username_from_payload_handler(payload)
+            username = rest_framework_jwt.utils.jwt_get_username_from_payload_handler(payload)
             if not username:
                 msg = 'Invalid payload.'
                 raise exceptions.AuthenticationFailed(msg)
