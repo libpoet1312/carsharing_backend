@@ -68,3 +68,4 @@ def populate_profile(sociallogin, user, **kwargs):
         user.avatar.save((user.username + " social") + '.jpg',
                          ContentFile(ph.read()))
         user.save()
+

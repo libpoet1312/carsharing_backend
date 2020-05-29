@@ -5,6 +5,8 @@ from rideRequests.serializers import UserRequestsSerializer
 from .models import User
 from rest_auth.registration.serializers import RegisterSerializer
 from phonenumber_field.serializerfields import PhoneNumberField
+import datetime
+from .adapter import UserAdapter
 
 
 class TestUserSerializer(serializers.ModelSerializer):
@@ -56,6 +58,9 @@ class CustomRegisterSerializer(RegisterSerializer):
     has_whatsup = serializers.BooleanField(required=False, default=False)
     has_viber = serializers.BooleanField(required=False, default=False)
     is_confirmed = serializers.BooleanField(default=True, required=False, read_only=True)
+    avatar = serializers.ImageField(default='avatar/default-avatar.jpg')
+
+    dob = serializers.DateField(format='%Y-%m-%d', input_formats=['%Y-%m-%d'], required=False)
 
     class Meta:
         model = User
@@ -75,19 +80,28 @@ class CustomRegisterSerializer(RegisterSerializer):
             'country': self.validated_data.get('country', ''),
             'has_whatsup': self.validated_data.get('has_whatsup', ''),
             'has_viber': self.validated_data.get('has_viber', ''),
+            'dob': self.validated_data.get('dob', ''),
         }
 
     def save(self, request):
+        print(request.data)
         adapter = get_adapter()
+        # adapter = UserAdapter
         user = adapter.new_user(request)
+
         self.cleaned_data = self.get_cleaned_data()
+        # user = adapter.save_user(request, user, self, commit=False)
+
+        print(user)
 
         user.phone_number = self.cleaned_data.get('phone_number')
         user.avatar = self.cleaned_data.get('avatar')
+
         user.gender = self.cleaned_data.get('gender')
         user.country = self.cleaned_data.get('country')
         user.has_whatsup = self.cleaned_data.get('has_whatsup')
         user.has_viber = self.cleaned_data.get('has_viber')
+        user.dob = self.cleaned_data.get('dob')
 
         print('username', self.cleaned_data.get('username'))
         print('password1', self.cleaned_data.get('password1'))
@@ -95,11 +109,13 @@ class CustomRegisterSerializer(RegisterSerializer):
         print('email', self.cleaned_data.get('email'))
         print('phone_number', self.cleaned_data.get('phone_number'))
         print('avatar', self.cleaned_data.get('avatar'))
-        print(self.cleaned_data.get('gender'))
+        print('gender', self.cleaned_data.get('gender'))
+        print('dob', self.cleaned_data.get('dob'))
+
         print(self.cleaned_data.get('country'))
         print(self.cleaned_data.get('has_whatsup'))
         print(self.cleaned_data.get('has_viber'))
 
-        user.save()
         adapter.save_user(request, user, self)
+        user.save()
         return user

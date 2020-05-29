@@ -243,6 +243,8 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
 }
 
+#ACCOUNT_ADAPTER = 'users.adapter.UserAdapter'
+
 
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
 
