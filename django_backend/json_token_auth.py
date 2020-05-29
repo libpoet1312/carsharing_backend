@@ -5,9 +5,11 @@ from django.contrib.auth import get_user_model
 from urllib.parse import parse_qs
 from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
-import rest_framework_jwt.utils
+
 from rest_framework_jwt.settings import api_settings
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+
+import rest_framework_jwt.utils
 
 from rest_framework import exceptions
 import jwt
