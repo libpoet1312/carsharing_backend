@@ -7,6 +7,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
 
 from rest_framework_jwt.settings import api_settings
+
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 
 import rest_framework_jwt.utils
@@ -31,7 +32,7 @@ def get_user(query_string):
                 msg = 'Error decoding token.'
                 raise exceptions.AuthenticationFailed(msg)
 
-            #print(payload)
+            # print(payload)
 
             username = rest_framework_jwt.utils.jwt_get_username_from_payload_handler(payload)
             if not username:
