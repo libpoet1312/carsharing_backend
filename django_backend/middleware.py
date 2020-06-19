@@ -76,7 +76,7 @@ class AuthenticationMiddlewareJWT(object):
 
     def __call__(self, request):
         request.user = self.__class__.get_jwt_user(request)
-        #print(request.user)
+        print(request.user)
         return self.get_response(request)
 
     @staticmethod
@@ -88,7 +88,7 @@ class AuthenticationMiddlewareJWT(object):
             return user
         try:
             user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
-            #print(user_jwt[0])
+            print(user_jwt[0])
             if user_jwt is not None:
                 return user_jwt[0]
         except:

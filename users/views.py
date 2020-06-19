@@ -39,16 +39,20 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = TestUserSerializer
-
+    permission_classes = [IsAuthenticated, ]
     authentication_classes = [JSONWebTokenAuthentication, ]
     pagination_class = None
 
     def get_permissions(self):
+        print('From VIEW: ')
+        print(self.request.user)
+
         if self.action == 'list':
+            print('edw')
             self.permission_classes = [IsAuthenticated, ]
         if self.action == 'update' or self.action == 'partial_update':
             print('skata')
-            self.permission_classes = [IsUserOrReadOnly]
+            self.permission_classes = [IsUserOrReadOnly, ]
         if self.action == 'create':
             self.permission_classes = [IsAdminUser, ]
 

@@ -28,6 +28,6 @@ class CarViewSet(viewsets.ModelViewSet):
         if self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
 
             print(self.request.data)
-            self.permission_classes = [IsCarOwnerOrReadOnly,]
+            self.permission_classes = [IsCarOwnerOrReadOnly, ]
 
         return super(self.__class__, self).get_permissions()

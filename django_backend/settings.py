@@ -68,12 +68,11 @@ SITE_ID = 1
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ),  #
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
 
 
@@ -100,16 +99,21 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # my middleware
     'django_backend.middleware.AuthenticationMiddlewareJWT',
 
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'https://localhost:3000',
     'http://localhost:3000',
     'https://192.168.1.45:3000',
-    'http://192.168.1.45:3000'
+    'http://192.168.1.45:3000',
+    'https://snf-876572.vm.okeanos.grnet.gr/',
+    'http://snf-876572.vm.okeanos.grnet.gr/',
+    'http://83.212.111.88:8000',
 )
 
 ROOT_URLCONF = 'django_backend.urls'
@@ -232,6 +236,7 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(hours=100),
     'JWT_ALLOW_REFRESH': True,
     'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 
 
