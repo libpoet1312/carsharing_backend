@@ -90,7 +90,7 @@ class AuthenticationMiddlewareJWT(object):
             user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
             print(user_jwt[0])
             if user_jwt is not None:
-                return user_jwt[0]
+                return user_jwt
         except:
             pass
         return user  # AnonymousUser
