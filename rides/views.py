@@ -9,6 +9,17 @@ from .serializers import RideListSerializer, TestRideSerializer, OwnerSingleRide
 from .models import Ride
 
 
+class MyRidesListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JSONWebTokenAuthentication]
+    serializer_class = OwnerSingleRideSerializer
+
+    def get_queryset(self):
+        queryset = Ride.objects.all().filter(uploader=self.request.user).order_by('created')
+        # print(queryset)
+
+        return queryset
+
 class RideListView(ListAPIView):
     queryset = Ride.objects.all()
     serializer_class = RideListSerializer

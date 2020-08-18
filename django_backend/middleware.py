@@ -73,22 +73,26 @@ from django.contrib.auth.models import AnonymousUser
 class AuthenticationMiddlewareJWT(object):
     def __init__(self, get_response):
         self.get_response = get_response
+        print('middlewareSTART', flush=True)
 
     def __call__(self, request):
+        print('middleware')
         request.user = self.__class__.get_jwt_user(request)
-        print(request.user)
+        # print(request.user)
         return self.get_response(request)
 
     @staticmethod
     def get_jwt_user(request):
 
-        user = get_user(request)
+        # print(request.headers)
 
+        user = get_user(request)
+        # print(user, flush=True)
         if user.is_authenticated:
             return user
         try:
             user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
-            print(user_jwt[0])
+            print(user_jwt, flush=True)
             if user_jwt is not None:
                 return user_jwt
         except:
