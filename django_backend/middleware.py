@@ -73,10 +73,10 @@ from django.contrib.auth.models import AnonymousUser
 class AuthenticationMiddlewareJWT(object):
     def __init__(self, get_response):
         self.get_response = get_response
-        print('middlewareSTART', flush=True)
+        # print('middlewareSTART', flush=True)
 
     def __call__(self, request):
-        print('middleware')
+        # print('middleware')
         request.user = self.__class__.get_jwt_user(request)
         # print(request.user)
         return self.get_response(request)
@@ -92,7 +92,7 @@ class AuthenticationMiddlewareJWT(object):
             return user
         try:
             user_jwt = JSONWebTokenAuthentication().authenticate(Request(request))
-            print(user_jwt, flush=True)
+            # print(user_jwt, flush=True)
             if user_jwt is not None:
                 return user_jwt
         except:

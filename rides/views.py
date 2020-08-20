@@ -5,8 +5,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .permissions import IsOwnerOrReadOnly
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import RideListSerializer, TestRideSerializer, OwnerSingleRideSerializer, \
-    AuthenticatedSingleRideSerializer, AnonymousSingleRideSerializer
+    AuthenticatedSingleRideSerializer, AnonymousSingleRideSerializer, CreatRideSerializer
 from .models import Ride
+from rest_framework import viewsets
+from cars.models import Car
 
 
 class MyRidesListView(ListAPIView):
@@ -20,15 +22,16 @@ class MyRidesListView(ListAPIView):
 
         return queryset
 
+
 class RideListView(ListAPIView):
     queryset = Ride.objects.all()
     serializer_class = RideListSerializer
     permission_classes = [AllowAny, ]
 
     def get_queryset(self):
-        queryset = Ride.objects.all()
+        queryset = Ride.objects.all().order_by('created')
         origin = self.request.query_params.get('origin', None)
-        #print(origin)
+        # print(origin)
         if origin is not None:
             queryset = queryset.filter(origin__contains=origin)
 
@@ -51,16 +54,21 @@ class RideListView(ListAPIView):
 
 class RideCreateView(CreateAPIView):
     queryset = Ride.objects.all()
-    serializer_class = RideListSerializer
+    serializer_class = CreatRideSerializer
     permission_classes = [IsAuthenticated, ]
     authentication_classes = [JSONWebTokenAuthentication]
 
     def post(self, request, *args, **kwargs):
-        serializer = RideListSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(uploader=request.user)
+        serializer = CreatRideSerializer(data=request.data)
+        # print(request.data['car'], flush=True)
+        # print(serializer.is_valid(), flush=True)
+        if serializer.is_valid(raise_exception=True):
+
+            ride = serializer.save(uploader=request.user, car=Car.objects.all().get(pk=request.data['car']['id']))
+
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            print('error', flush=True)
             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -71,21 +79,23 @@ class RideDetailView(RetrieveAPIView):
     authentication_classes = [JSONWebTokenAuthentication]
 
     def get_serializer_class(self):
-        #print(self.request.user)
+        # print(self.request.user)
         if self.request.user.is_authenticated:
             if self.get_object().uploader == self.request.user:
+                # print('owner', flush=True)
                 serializer_class = OwnerSingleRideSerializer
             else:
+                # print('authenticated', flush=True)
                 serializer_class = AuthenticatedSingleRideSerializer
         else:
-            #print('edw')
+            # print('edw')
             serializer_class = AnonymousSingleRideSerializer
         return serializer_class
 
 
 class RideEditView(RetrieveUpdateDestroyAPIView):
     queryset = Ride.objects.all()
-    serializer_class = TestRideSerializer
+    serializer_class = OwnerSingleRideSerializer
     authentication_classes = [JSONWebTokenAuthentication]
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 

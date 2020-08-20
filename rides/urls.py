@@ -9,5 +9,4 @@ urlpatterns = [
     path('<int:pk>/', RideDetailView.as_view(), name='detail_ride'),
     path('<int:pk>/edit/', RideEditView.as_view(), name='edit_ride'),
     path('', include('rideRequests.urls')),
-
 ]

@@ -22,7 +22,7 @@ class FacebookLogin(SocialLoginView):
 class UserView(ListAPIView):
     serializer_class = TestUserSerializer
     queryset = User.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny,]
     pagination_class = None
 
 
@@ -30,7 +30,7 @@ class UserUpdate(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = CustomRegisterSerializer
     permission_classes = [IsAuthenticated, ]
-    authentication_classes = [JSONWebTokenAuthentication, ]
+    authentication_classes = [JSONWebTokenAuthentication ]
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -52,7 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, ]
         if self.action == 'update' or self.action == 'partial_update':
             print('skata')
-            self.permission_classes = [IsUserOrReadOnly, ]
+            self.permission_classes = [IsUserOrReadOnly,]
         if self.action == 'create':
             self.permission_classes = [IsAdminUser, ]
 

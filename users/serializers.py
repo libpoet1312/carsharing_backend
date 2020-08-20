@@ -4,9 +4,6 @@ from allauth.account.adapter import get_adapter
 from rideRequests.serializers import UserRequestsSerializer
 from .models import User
 from rest_auth.registration.serializers import RegisterSerializer
-from phonenumber_field.serializerfields import PhoneNumberField
-import datetime
-from .adapter import UserAdapter
 
 
 class TestUserSerializer(serializers.ModelSerializer):
@@ -23,6 +20,7 @@ class MyUserSerializer(serializers.ModelSerializer):
     notifications = serializers.SerializerMethodField()
     requestsOfMyRides = serializers.SerializerMethodField()
     car = serializers.SerializerMethodField(method_name="get_car")
+    avatar = serializers.ImageField(default='avatar/default-avatar.jpg')
 
     class Meta:
         model = User
@@ -45,6 +43,14 @@ class MyUserSerializer(serializers.ModelSerializer):
         print("car")
         from cars.serializers import CarSerializer
         return CarSerializer(obj.car.all(), many=True).data
+
+    # def update(self, instance, validated_data):
+    #     print('MyUserSerializer', flush=True)
+    #     print(validated_data, flush=True)
+    #     if(validated_data['avatar']):
+    #         instance.avatar = validated_data['avatar']
+    #     instance.save()
+    #     return instance
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
@@ -84,7 +90,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         }
 
     def save(self, request):
-        print(request.data)
+        print(request.data, flush=True)
         adapter = get_adapter()
         # adapter = UserAdapter
         user = adapter.new_user(request)
