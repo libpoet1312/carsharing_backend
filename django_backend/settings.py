@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ahhme+72q%7nx7j!=76l%hm+wqp^3_0d=97n829g3tf5yr8+1n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
-    
+
     'channels',
     'notifications',
     'phonenumber_field',
@@ -70,8 +70,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+#        'rest_framework.authentication.SessionAuthentication',
+#        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
@@ -91,7 +94,7 @@ AUTHENTICATION_BACKENDS = (
 MIDDLEWARE = [
     # CORS
     'corsheaders.middleware.CorsMiddleware',
-    #
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -102,19 +105,21 @@ MIDDLEWARE = [
     # my middleware
     'django_backend.middleware.AuthenticationMiddlewareJWT',
 
+
 ]
 
-
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    'https://localhost:3000',
-    'http://localhost:3000',
-    'https://192.168.1.45:3000',
-    'http://192.168.1.45:3000',
-    'https://snf-876572.vm.okeanos.grnet.gr/',
-    'http://snf-876572.vm.okeanos.grnet.gr/',
-    'http://83.212.111.88:8000',
-)
+# CORS_ORIGIN_WHITELIST = (
+#     'https://localhost:3000',
+#     'http://localhost:3000',
+#     'https://192.168.1.45:3000',
+#     'http://192.168.1.45:3000',
+#     'https://snf-876572.vm.okeanos.grnet.gr/',
+#     'http://snf-876572.vm.okeanos.grnet.gr/',
+#     'http://83.212.111.88:8000',
+#     'https://carsharing1312.herokuapp.com',
+# )
+
 
 ROOT_URLCONF = 'django_backend.urls'
 
@@ -197,6 +202,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+# SOCIALACCOUNT_EMAIL_REQUIRED = False
+# SOCIALACCOUNT_QUERY_EMAIL = True
 # Main User Model
 AUTH_USER_MODEL = 'users.User'
 
@@ -209,7 +219,7 @@ SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
         'METHOD': 'js_sdk',
         'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
-        'SCOPE': ['email', 'public_profile', 'picture', 'id'],
+        'SCOPE': ['email', 'public_profile', 'picture', 'id', 'user_birthday', 'user_gender'],
         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
         'INIT_PARAMS': {'cookie': True},
         'FIELDS': [
