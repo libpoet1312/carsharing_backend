@@ -1,6 +1,7 @@
 from urllib.request import urlopen
 
 from allauth.account.signals import user_signed_up
+from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
@@ -59,17 +60,39 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 @receiver(user_signed_up)
-def populate_profile(sociallogin, user, **kwargs):
+def populate_profile(request, user, **kwargs):
     print('populate_profile', flush=True)
     print(user, flush=True)
-    if sociallogin.account.provider == 'facebook':
-        user_data = user.socialaccount_set.filter(provider='facebook')[0].extra_data
-        picture_url = "http://graph.facebook.com/" + sociallogin.account.uid + "/picture?type=large"
-        print(user_data, flush=True)
-        ph = urlopen(picture_url)
-        # print(ph, flush=True)
+    try:
 
-        user.avatar.save((user.username + " social") + '.jpg',
-                         ContentFile(ph.read()))
-        user.fullname.save(user_data['name'])
+        user_data = SocialAccount.objects.filter(user=user, provider='facebook')[0].extra_data
+        obj = SocialAccount.objects.filter(user=user, provider='facebook')[0]
+
+        print(obj, flush=True)
+        print(user_data, flush=True)
+        picture_url = "http://graph.facebook.com/" + user_data['id'] + "/picture?type=large"
+
+        ph = urlopen(picture_url)
+        print(ph, flush=True)
+
+        user.avatar.save((user.username + " social") + '.jpg', ContentFile(ph.read()))
+
+        user.fullname = user_data['name']
         user.save()
+    except:
+        return
+        # if sociallogin.account.provider == 'facebook':
+        #     user_data = user.socialaccount_set.filter(provider='facebook')[0].extra_data
+        #     picture_url = "http://graph.facebook.com/" + sociallogin.account.uid + "/picture?type=large"
+        #     print(user.socialaccount_set.filter(provider='facebook'), flush=True)
+        #     print(user.socialaccount_set.filter(provider='facebook')[0], flush=True)
+        #     print(user_data, flush=True)
+        #     first_name = user_data['first_name']
+        #     ph = urlopen(picture_url)
+        #     print(ph, flush=True)
+
+        #     user.avatar.save((user.username + " social") + '.jpg',
+        #                     ContentFile(ph.read()))
+
+        #     user.fullname = user_data['name']
+        #     user.save()
