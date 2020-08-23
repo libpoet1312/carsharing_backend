@@ -13,6 +13,7 @@ class User(AbstractUser):
         ('O', 'Other')
     )
 
+    fullname = models.TextField(max_length=40, blank=True, null=True, verbose_name='full name')
     dob = models.DateField(max_length=8, default=datetime.date(1999, 12, 31))
     phone_number = models.TextField(max_length=12, blank=True, null=True, verbose_name='Τηλέφωνο')  # Τηλέφωνο
     avatar = models.ImageField(upload_to='avatar/', default='avatar/default-avatar.jpg', blank=True)

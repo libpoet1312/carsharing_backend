@@ -11,7 +11,7 @@ class TestUserSerializer(serializers.ModelSerializer):
         model = User
         # fields = '__all__'
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                  'has_whatsup', 'has_viber',)
+                  'has_whatsup', 'has_viber', 'fullname', )
         depth = 1
 
 
@@ -25,7 +25,7 @@ class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('pk', 'email', 'username', 'phone_number', 'avatar', 'gender', 'dob', 'country', 'date_joined',
-                  'has_whatsup', 'has_viber', 'car', 'request', 'requestsOfMyRides', 'notifications',)
+                  'has_whatsup', 'has_viber', 'car', 'request', 'requestsOfMyRides', 'notifications', 'fullname',)
         depth = 2
 
     def requestsOfMyRides(self):
@@ -60,6 +60,7 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 
 class CustomRegisterSerializer(RegisterSerializer):
+    fullname = serializers.CharField(required=False)
     country = serializers.CharField(required=False)
     has_whatsup = serializers.BooleanField(required=False, default=False)
     has_viber = serializers.BooleanField(required=False, default=False)
@@ -87,6 +88,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             'has_whatsup': self.validated_data.get('has_whatsup', ''),
             'has_viber': self.validated_data.get('has_viber', ''),
             'dob': self.validated_data.get('dob', ''),
+            'fullname': self.validated_data.get('fullname', ''),
         }
 
     def save(self, request):
@@ -108,6 +110,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.has_whatsup = self.cleaned_data.get('has_whatsup')
         user.has_viber = self.cleaned_data.get('has_viber')
         user.dob = self.cleaned_data.get('dob')
+        user.fullname = self.cleaned_data.get('fullname')
 
         print('username', self.cleaned_data.get('username'))
         print('password1', self.cleaned_data.get('password1'))

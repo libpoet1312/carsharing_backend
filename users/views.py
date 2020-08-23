@@ -66,10 +66,10 @@ def populate_profile(sociallogin, user, **kwargs):
         user_data = user.socialaccount_set.filter(provider='facebook')[0].extra_data
         picture_url = "http://graph.facebook.com/" + sociallogin.account.uid + "/picture?type=large"
         print(user_data, flush=True)
-        first_name = user_data['first_name']
         ph = urlopen(picture_url)
-        print(ph, flush=True)
+        # print(ph, flush=True)
 
         user.avatar.save((user.username + " social") + '.jpg',
                          ContentFile(ph.read()))
+        user.fullname.save(user_data['name'])
         user.save()
