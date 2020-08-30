@@ -74,6 +74,22 @@ class OwnerSingleRideSerializer(serializers.ModelSerializer):
         print('create', flush=True)
         return Ride.objects.create(**validated_data)
 
+    def update(self, instance, validated_data):
+        print('update', flush=True)
+        print(validated_data, flush=True)
+        instance.origin = validated_data.get('origin', instance.origin)
+        instance.destination = validated_data.get('destination', instance.destination)
+        instance.date = validated_data.get('date', instance.date)
+        instance.time = validated_data.get('time', instance.time)
+        instance.vacant_seats = validated_data.get('vacant_seats', instance.vacant_seats)
+        # instance.car = validated_data.get('origin', instance.origin)
+        car = validated_data.get('car')
+        print(car['plate'], flush=True)
+        instance.car = Car.objects.all().get(plate=car['plate'])
+        instance.save()
+
+        return instance
+
 
 class CreatRideSerializer(serializers.ModelSerializer):
     uploader = SimpleUserSerializer(read_only=True)
@@ -83,7 +99,7 @@ class CreatRideSerializer(serializers.ModelSerializer):
         model = Ride
         fields = ('pk', 'origin', 'destination', 'type',
                   'date', 'time', 'periodic', 'vacant_seats',
-                  'uploader','car',)
+                  'uploader', 'car',)
 
         depth = 1
 
