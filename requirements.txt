@@ -27,7 +27,7 @@ django-phonenumber-field==4.0.0
 django-redux==1.0.0
 django-rest-auth==0.9.5
 django-schema-graph==1.2.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 drf-jwt==1.15.2
 hiredis==1.0.1
